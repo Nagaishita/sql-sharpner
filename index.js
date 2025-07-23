@@ -1,17 +1,18 @@
-const express=require('express');
-const app=express();
-const db=require('./utils/dbconnection.js');
-const studentRoutes=require('./routes/studentRoutes.js');
-const port=3000;
+const sequelize = require('./config/database');
+const Student = require('./models/student');
 
-app.get('/',(req,res)=>{
-    res.send('hello world');
-});
+async function main() {
+  try {
+    await sequelize.authenticate();
+    console.log('Connection has been established successfully.');
 
-app.use("/students",studentRoutes);
+    // Sync model with database (creates table)
+    await sequelize.sync(); // or sequelize.sync({ force: true }) to reset table
 
+    console.log('Student table created/verified.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+}
 
-app.listen(port,(err)=>{
-
-    console.log("server is running");
-});
+main();
